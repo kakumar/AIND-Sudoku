@@ -1,5 +1,6 @@
 __author__ = 'Karan Kumar'
 
+# Initialize rows and cols
 rows = 'ABCDEFGHI'
 cols = '123456789'
 
@@ -10,13 +11,11 @@ def cross(A, B):
     """
     return [s + t for s in A for t in B]
 
-
+# Encode the board
 boxes = cross(rows, cols)
-
 row_units = [cross(r, cols) for r in rows]
 column_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', '456', '789')]
-# diagonal_units = [cross(('ABCDEFGHI'), ('123456789'))]
 a = [x[0] + x[1] for x in list(zip('ABCDEFGHI', '123456789'))]
 b = [x[0] + x[1] for x in list(zip('ABCDEFGHI', reversed('123456789')))]
 diagonal_units = list()
@@ -116,9 +115,11 @@ def eliminate(values):
     """
     for x in values.keys():
         if len(values[x]) == 1:
+            # For each peer of unit under consideration
             for peer in peers[x]:
                 if len(values[peer]) != 1:
                     d = []
+                    # Eliminate the digit and update the dict
                     for val in list(values[peer]):
                         if val != values[x]:
                             d.append(val)
@@ -140,20 +141,18 @@ def only_choice(values):
         Resulting Sudoku in dictionary form after filling in only choices.
     """
     for unit in unitlist:
+        # Create frequency table and store the key to be updated
         freq = {}
-        # print(unit)
         for x in unit:
             tmp = list(values[x])
-            # print(tmp)
             for y in tmp:
-                # print(y)
                 if y not in freq.keys():
                     freq[y] = {}
                     freq[y]['count'] = 1
                     freq[y]['key'] = x
                 else:
                     freq[y]['count'] += 1
-
+        # Update cases where frequency is 1
         for f in freq.keys():
             if freq[f]['count'] == 1:
                 values[freq[f]['key']] = f
@@ -198,6 +197,7 @@ def search(values):
     Returns:
         The resulting sudoku in dictionary form, else FALSE
     """
+    # Apply elimiate and only_choice to the dict first
     values = reduce_puzzle(values)
 
     if values is False:
@@ -236,7 +236,6 @@ def solve(grid):
     Returns:
         The dictionary representation of the final sudoku grid. False if no solution exists.
     """
-    "Using depth-first search and propagation, create a search tree and solve the sudoku."
     values = grid_values(grid)
     x = search(values)
     if x:
